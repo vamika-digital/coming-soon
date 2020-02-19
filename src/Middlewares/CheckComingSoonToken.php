@@ -21,11 +21,16 @@ class CheckComingSoonToken
    */
   public function handle($request, Closure $next)
   {
-    $currentRoute = Route::currentRouteName();
-    if ((!is_null($currentRoute) && in_array($currentRoute, $this->excludeRoutes)) || $request->session()->has('comingsoon-token')) {
+    $isComingSoonActive = config('comingsoon.start');
+    if (!$isComingSoonActive) {
       return $next($request);
     } else {
-      return redirect('/coming-soon');
+      $currentRoute = Route::currentRouteName();
+      if ((!is_null($currentRoute) && in_array($currentRoute, $this->excludeRoutes)) || $request->session()->has('comingsoon-token')) {
+        return $next($request);
+      } else {
+        return redirect('/coming-soon');
+      }
     }
   }
 }
